@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import { getInfo, getProposals, isWallectConnected } from "./Blockchain.services";
+import Header from "./components/Header";
+import Home from "./views/Home";
+import Proposal from "./views/Proposal";
 
-function App() {
+const App = () => {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(async () => {
+    await isWallectConnected();
+    getInfo();
+    getProposals();
+    setLoaded(true);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#212936] dark:text-gray-300">
+      <Header />
+      {loaded ? (
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/proposal/:id" element={<Proposal />} />
+        </Routes>
+      ) : null}
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
     </div>
   );
-}
+};
 
 export default App;
